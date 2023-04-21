@@ -28,7 +28,9 @@ const initialState = {
 }
 
 const streamReducer = (state: InitialStateType, action: any) => {
+  console.log(state)
   switch (action.type) {
+    //add message only if message id is not already in state
     case 'ADD_MESSAGE':
       return {
         ...state,
