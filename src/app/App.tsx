@@ -3,7 +3,7 @@ import socketClient from 'socket.io-client'
 import './app.css'
 import { StreamContext } from '@src/app/ChatStream/StreamContext'
 import { useForm } from 'react-hook-form'
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from 'uuid'
 import Navigation from '@src/app/Navigation'
 
 const socket = socketClient('http://localhost:3000', {
@@ -26,8 +26,10 @@ const App = () => {
 
   useEffect(() => {
     socket.on('message response', (data) => {
-      
-      const exists = state.messages.some((message) => message.id === data.id)
+      let exists = false
+      if (state.messages) {
+        exists = state.messages.some((message) => message.id === data.id)
+      }
 
       if (!exists) {
         dispatch({
@@ -36,7 +38,9 @@ const App = () => {
         })
       }
     })
-    return () => {socket.off('message response')};
+    return () => {
+      socket.off('message response')
+    }
   }, [socket, state])
 
   const onSubmit = handleSubmit((data) => {
@@ -56,8 +60,6 @@ const App = () => {
       id: id,
       timestamp: time
     })
-
-
   })
 
   return (
@@ -67,13 +69,13 @@ const App = () => {
         className="mb-auto h-10 flex-1 scr overflow-y-auto"
         ref={chatboxRef}
       >
-        {state.messages.length === 0 && (
+        {state.messages && state.messages.length === 0 && (
           <div className="py-32 text-center">
             <h1 className="text-4xl font-bold">SOCKETS4U</h1>
             <p className="text-2xl font-bold">A simple chat app</p>
           </div>
         )}
-        {state.messages.map((message, index) => (
+        {state.messages && state.messages.map((message, index) => (
           <div key={index} className="flex border-b-2">
             <div className="p-2">{state.user.name}:</div>
             <div className="flex-1 p-2">{message.message}</div>

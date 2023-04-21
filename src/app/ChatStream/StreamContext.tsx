@@ -34,7 +34,7 @@ const streamReducer = (state: InitialStateType, action: any) => {
     case 'ADD_MESSAGE':
       return {
         ...state,
-        messages: [...state.messages, action.payload]
+        messages: [...state.messages || [], action.payload]
       }
     default:
       return state
