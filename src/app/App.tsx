@@ -3,8 +3,9 @@ import socketClient from 'socket.io-client'
 import './app.css'
 import { StreamContext } from '@src/app/ChatStream/StreamContext'
 import { useForm } from 'react-hook-form'
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from 'uuid'
 import Navigation from '@src/app/Navigation'
+import { sendNotification } from '@src/lib/notifications'
 
 const socket = socketClient('http://localhost:3000', {
   withCredentials: false
@@ -14,7 +15,6 @@ const App = () => {
   const { handleSubmit, register } = useForm<FormValues>()
   const { state, dispatch } = useContext(StreamContext)
   const chatboxRef = useRef(null)
-  Notification.requestPermission()
 
   type FormValues = {
     message: string
@@ -24,9 +24,10 @@ const App = () => {
     console.log(socket.id)
   })
 
+  useEffect(() => {}, [])
+
   useEffect(() => {
     socket.on('message response', (data) => {
-      
       const exists = state.messages.some((message) => message.id === data.id)
 
       if (!exists) {
@@ -34,9 +35,17 @@ const App = () => {
           type: 'ADD_MESSAGE',
           payload: data
         })
+        sendNotification(
+          'New message',
+          data.message,
+          'https://img.icons8.com/external-flat-icons-inmotus-design/256/external-connection-connection-flat-icons-inmotus-design-6.png',
+          'new-message'
+        )
       }
     })
-    return () => {socket.off('message response')};
+    return () => {
+      socket.off('message response')
+    }
   }, [socket, state])
 
   const onSubmit = handleSubmit((data) => {
@@ -56,25 +65,25 @@ const App = () => {
       id: id,
       timestamp: time
     })
-
-
   })
 
   return (
     <div className="flex flex-col h-screen justify-between">
       <Navigation />
       <main
-        className="mb-auto h-10 flex-1 scr overflow-y-auto"
+        className="mb-auto h-10 flex-1 scr overflow-y-auto bg-teal-950"
         ref={chatboxRef}
       >
         {state.messages.length === 0 && (
           <div className="py-32 text-center">
-            <h1 className="text-4xl font-bold">SOCKETS4U</h1>
-            <p className="text-2xl font-bold">A simple chat app</p>
+            <h1 className="text-4xl font-bold text-sky-200">SOCKETS4U</h1>
+            <p className="text-2xl font-bold  text-sky-100">
+              A simple chat app
+            </p>
           </div>
         )}
         {state.messages.map((message, index) => (
-          <div key={index} className="flex border-b-2">
+          <div key={index} className="flex bg-sky-200/50 m-2 p-2 rounded-md">
             <div className="p-2">{state.user.name}:</div>
             <div className="flex-1 p-2">{message.message}</div>
             <div className="p-2">{message.timestamp}</div>
