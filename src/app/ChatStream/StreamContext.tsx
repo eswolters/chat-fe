@@ -14,12 +14,12 @@ type UserType = {
 }
 
 type InitialStateType = {
-  messages?: MessageType[]
+  messages: MessageType[]
   user: UserType
 }
 
 const initialState = {
-  messages: [] as MessageType[],
+  messages: [],
   user: {
     id: '234235445436',
     name: 'John Doe',
@@ -34,7 +34,7 @@ const streamReducer = (state: InitialStateType, action: any) => {
     case 'ADD_MESSAGE':
       return {
         ...state,
-        messages: [...state.messages || [], action.payload]
+        messages: [...(state.messages || []), action.payload]
       }
     default:
       return state
